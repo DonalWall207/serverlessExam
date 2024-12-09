@@ -46,12 +46,10 @@ interface Car {
    },
   ];
 
-// Generic function to filter matches
 function getMatches<T>(data: T[], criteria: (item: T) => boolean): T[] {
     return data.filter(criteria);
   }
   
-  // Test cases
   const blueBicycles = getMatches<Bicycle>(bicycleShed, (b) => b.color === "Blue");
   console.log("Blue Bicycles:", blueBicycles);
   
