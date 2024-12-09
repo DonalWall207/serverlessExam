@@ -22,7 +22,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, context) => {
       return {
         statusCode: 400,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ message: "Missing movieId or castBody in path" }),
+        body: JSON.stringify({ message: "Missing movieId or role in path" }),
       };
     }
 
@@ -49,7 +49,15 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, context) => {
 
     const commandOutput = await ddbDocClient.send(new QueryCommand(commandInput));
 
-    const awards = commandOutput.Items || [];
+    let awards = commandOutput.Items || [];
+
+    // Filter by 'name' if query parameter is provided
+    if (queryParams?.name) {
+      const nameSubstring = queryParams.name.toLowerCase();
+      awards = awards.filter((award: any) =>
+        award.name?.toLowerCase().includes(nameSubstring)
+      );
+    }
 
     const totalAwards = awards.reduce((sum, award) => sum + (award.numAwards || 0), 0);
 
